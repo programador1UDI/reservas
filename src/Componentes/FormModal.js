@@ -1,101 +1,162 @@
-import React from "react";
-import { Button, Checkbox, Label, Modal, TextInput } from "flowbite-react";
-import { useState } from "react";
+import React, { useState } from 'react';
+import { Modal, Button, TextInput } from 'flowbite-react';
+import axios from 'axios';
 
-import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
-import { TimePicker } from "@mui/x-date-pickers/TimePicker";
-import { colors } from "@mui/material";
-import { red } from "@mui/material/colors";
+const FormModal = ({ openModal, setOpenModal, selectedDate }) => {
+    const [nombre, setNombre] = useState('');
+    const [telefono, setTelefono] = useState('');
+    const [correo, setCorreo] = useState('');
+    const [recursoId, setRecursoId] = useState('');
+    // const [usuarioId, setUsuarioId] = useState('');
+    const [dependenciaId, setDependenciaId] = useState('');
+    const [fechaInicio, setFechaInicio] = useState('');
+    const [fechaFin, setFechaFin] = useState('');
 
-export default function FormModal() {
-    const [openModal, setOpenModal] = useState(false);
-    const [email, setEmail] = useState("");
-
-    function onCloseModal() {
+    const handleCloseModal = () => {
         setOpenModal(false);
-        /* setEmail(''); */
-    }
+        resetFormFields();
+    };
+
+    const resetFormFields = () => {
+        setNombre('');
+        setTelefono('');
+        setCorreo('');
+        setRecursoId('');
+        // setUsuarioId('');
+        setDependenciaId('');
+        setFechaInicio('');
+        setFechaFin('');
+        
+    };
+
+    const handleSubmit = (event) => {
+        event.preventDefault();
+        const data = {
+            nombre: nombre,
+            telefono: telefono,
+            correo: correo,
+            recurso_id: recursoId,
+            // usuario_id: usuarioId,
+            dependencia_id: dependenciaId,
+            fecha_inicio: selectedDate + ' ' + fechaInicio, // Combina fecha seleccionada con hora de inicio
+            fecha_fin: selectedDate + ' ' + fechaFin, // Combina fecha seleccionada con hora de fin
+            // prestatario_id: usuarioId 
+        };
+
+        axios.post('http://192.168.254.240/sarf_back/public/api/reservas', data)
+            .then(response => {
+                console.log(response.data);
+                alert('Prestamo solicitado con éxito');
+                handleCloseModal();
+            })
+            .catch(error => {
+                console.error(error);
+
+                alert('Error al solicitar el prestamo');
+                alert(error);
+
+
+            });
+    };
+
     return (
-        <>
+        <Modal show={openModal} onClose={handleCloseModal}>
+            <Modal.Header>Solicitar Prestamo</Modal.Header>
+            <Modal.Body>
+                <form onSubmit={handleSubmit} >
+                    <div className="grid grid-cols-2 gap-3">
 
-            <Button onClick={() => setOpenModal(true)}>Evento</Button>
-            <Modal show={openModal} size="lg" onClose={onCloseModal} popup>
-                <Modal.Header />
-                <Modal.Body>
-                    <div className="space-y-2 ">
-                        {/* <h3 className="text-xl font-medium text-gray-900 dark:text-white">Sign in to our platform</h3> */}
                         <div>
-                            <div className="block">
-                                <Label htmlFor="Solicitante" value="Solicitante" />
-                            </div>
+                            <label htmlFor="title">Solicitante:</label>
                             <TextInput
-
-
-                                id="Solcitante"
-                                placeholder=""
+                                id="title"
                                 type="text"
-                                class="form-input block w-full px-3 py-2 border border-gray-300 rounded bg-gray-200 focus:outline-none focus:ring-gray-500 focus:border-gray-500 sm:text-sm"
-                                /*  value={email} */
-                                onChange={(event) => setEmail(event.target.value)}
+                                value={nombre}
+                                onChange={(e) => setNombre(e.target.value)}
                                 required
                             />
                         </div>
                         <div>
-                            <div className="block">
-                                <Label htmlFor="Telefono" value="Telefono" />
-                            </div>
+                            <label htmlFor="telefono">Telefono:</label>
                             <TextInput
-                                id="Telefono"
+                                id="telefono"
                                 type="tel"
-                                placeholder=""
-                                class="form-input block w-full px-3 py-2 border border-gray-300 rounded bg-gray-200 focus:outline-none focus:ring-gray-500 focus:border-gray-500 sm:text-sm"
-                                /*   value={email} */
-                                onChange={(event) => setEmail(event.target.value)}
+                                value={telefono}
+                                onChange={(e) => setTelefono(e.target.value)}
                                 required
                             />
                         </div>
                         <div>
-                            <div className="block">
-                                <Label htmlFor="Email" value="Email" />
-                            </div>
+                            <label htmlFor="telefono">Correo:</label>
                             <TextInput
-                                id="Telefono"
-                                placeholder=""
+                                id="email"
                                 type="email"
-                                class="form-input block w-full px-3 py-2 border border-gray-300 rounded bg-gray-200 focus:outline-none focus:ring-gray-500 focus:border-gray-500 sm:text-sm"
-                                /*   value={email} */
-                                onChange={(event) => setEmail(event.target.value)}
+                                value={correo}
+                                onChange={(e) => setCorreo(e.target.value)}
                                 required
                             />
                         </div>
-
                         <div>
+                            <label class="text-left mb-1 block">Dependencia</label>
+                            <select
+                                class="form-input block w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                                value={dependenciaId}
+                                onChange={(e) => setDependenciaId(e.target.value)}
+                            >
+                                <option>Seleccione la Dependencia</option>
+                                <option value={1}>Bienestar</option>
+                                <option value={2}>Hostales</option>
+                                <option value={3}>Transporte</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="text-left mb-1 block">Recurso</label>
+                            <select
+                                class="form-input block w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                                value={recursoId}
+                                onChange={(e) => setRecursoId(e.target.value)}
+                            >
+                                <option>Seleccione el Recurso</option>
+                                <option value={1}>Sala de Juntas</option>
+                                <option value={2}>Aula</option>
+                                <option value={3}>Auditorio</option>
 
-                            <div className="flex justify-between gap-2 mt-4">
-                                <div className="flex items-center">
-                                    <LocalizationProvider  dateAdapter={AdapterDayjs}>
-                                        <TimePicker   label="Hora de Inicio" />
-                                    </LocalizationProvider>
-                                </div>
-                                <div className="flex items-center ">
-                                    <LocalizationProvider dateAdapter={AdapterDayjs}>
-                                        <TimePicker label="Hora Fin" />
-                                    </LocalizationProvider>
-                                </div>
-                            </div>
+                            </select>
                         </div>
 
 
-                        <div className="flex justify-end  text-sm font-medium text-white ">
-
-                            <div className="mt-3">
-                                <button className="bg-neutral-900 py-2 px-4 rounded-md">Guardar</button>
+                        <div className="grid grid-cols-2 gap-2">
+                            <div>
+                                <label htmlFor="startTime">Hora de inicio:</label>
+                                <TextInput
+                                    id="startTime"
+                                    type="time"
+                                    value={fechaInicio}
+                                    onChange={(e) => setFechaInicio(e.target.value)}
+                                    required
+                                />
+                            </div>
+                            <div>
+                                <label htmlFor="endTime">Hora de fin:</label>
+                                <TextInput
+                                    id="endTime"
+                                    type="time"
+                                    value={fechaFin}
+                                    onChange={(e) => setFechaFin(e.target.value)}
+                                    required
+                                />
                             </div>
                         </div>
                     </div>
-                </Modal.Body>
-            </Modal>
-        </>
+
+                    <div className="flex flex-end  mt-6">
+                        <Button type="submit">Guardar</Button>
+                    </div>
+
+                </form>
+            </Modal.Body>
+        </Modal>
     );
-}
+};
+
+export default FormModal;

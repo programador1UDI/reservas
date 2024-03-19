@@ -1,13 +1,15 @@
 import React, { useState } from "react";
 import axios from "axios";
-import { HiInformationCircle } from 'react-icons/hi';
-import { Alert } from 'flowbite-react';
+import { ToastContainer, toast } from 'react-toastify';
+  import 'react-toastify/dist/ReactToastify.css';
+
 
 const Login = () => {
   const [name, setName] = useState("");
   const [password, setPassword] = useState("");
   const [rol, setRol] = useState("");
-
+  
+ 
 
   const handleLogin = async () => {
     try {
@@ -19,16 +21,17 @@ const Login = () => {
           rol,
         }
       );
-
+  
       if (response.data.status === "success") {
-        alert("Inicio de sesión exitoso");
-        /* ir a calendario */
-        window.location.href = "/lateral";
+        toast.success("Inicio de sesión exitoso");
+        setTimeout(() => {
+          window.location.href = "/lateral";
+        }, 1000); // Redirige después de 1 segundo
       } else {
-        alert("Credenciales incorrectas");
+        toast.error("Credenciales incorrectas");
       }
     } catch (error) {
-      alert("Credenciales incorrectas");
+      toast.error("Credenciales incorrectas");
       console.error("Error al intentar iniciar sesión:", error);
     }
   };
@@ -83,7 +86,7 @@ const Login = () => {
                       value={rol}
                       onChange={(e) => setRol(e.target.value)}
                     >
-                       <option>Seleccione el tipo de usuario</option>
+                      <option>Seleccione el tipo de usuario</option>
                       <option value={1}>Administrador</option>
                       <option value={2}>Profesional Dependencia</option>
                     </select>
@@ -92,13 +95,14 @@ const Login = () => {
 
                 <div class="flex items-center justify-center mt-6">
                   <button
-                  onClick={handleLogin}
+                    onClick={handleLogin}
                     type="button"
                     class="  bg-neutral-900 text-white px-4 py-2 rounded-md font-medium tracking-wide hover:bg-neutral-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-bg-slate-950 w-full"
                   >
                     Iniciar Sesión
                   </button>
                 </div>
+                
               </form>
 
 

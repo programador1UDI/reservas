@@ -3,14 +3,13 @@ import axios from 'axios';
 import { FaEdit } from 'react-icons/fa';
 import { MdDelete } from 'react-icons/md';
 import NavBar from './NavBar';
-
-const CrudUsers = () => {
-    const [users, setUsers] = useState([]);
+export default function CrudDependencia() {
+    const [dependencias, setDependencias] = useState([]);
 
     useEffect(() => {
-        axios.get('http://192.168.254.240/sarf_back/public/api/users')
+        axios.get('http://192.168.254.240/sarf_back/public/api/listardependencia')
             .then(response => {
-                setUsers(response.data.users);
+                setDependencias(response.data.dependencias);
             })
             .catch(error => {
                 console.error('Error fetching users:', error);
@@ -20,30 +19,28 @@ const CrudUsers = () => {
     return (
         <>
             <NavBar />
-            <h1 className="text-2xl font-semibold my-8">Usuarios</h1>
+            <h1 className="text-2xl font-semibold my-8">Dependencia</h1>
             <table className="w-3/4 md:w-3/4 mx-auto min-w-full divide-y divide-gray-200 dark:divide-gray-700">
                 <thead className="bg-gray-50 dark:bg-gray-800">
                     <tr>
                         <th className=" py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">Nombre</th>
                         <th className=" py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">Dependencia</th>
-                        <th className=" py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">Correo</th>
                         <th className=" py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">Campus</th>
-                        <th className=" py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
                         <th className=" py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">Opciones</th>
                     </tr>
                 </thead>
                 <tbody className="bg-white divide-y divide-gray-200 dark:bg-gray-900 dark:divide-gray-700">
-                    {users.map(user => (
-                        <tr key={user.id}>
-                            <td className=" py-4 whitespace-nowrap">{user.name}</td>
-                            <td className=" py-4 whitespace-nowrap">{user.dependencia_id}</td>
-                            <td className=" py-4 whitespace-nowrap">{user.email}</td>
-                            <td className=" py-4 whitespace-nowrap">{user.campus_id === 1 ? 'Bucaramanga' : user.campus_id === 2 ? 'Barrancabermeja' : 'San Gil'}</td>
-                            <td className=" py-4 whitespace-nowrap">
-                                <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${user.status === 'Activo' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
-                                    {user.status}
+                    {dependencias.map(dependencia => (
+                        <tr key={dependencia.id_dependencia}>
+                            <td className=" py-4 whitespace-nowrap">{dependencia.nom_dependencia}</td>
+                            <td className=" py-4 whitespace-nowrap">{dependencia.encargado}</td>
+                            <td className=" py-4 whitespace-nowrap">{dependencia.campus_id === 1 ? 'Bucaramanga' : dependencia.campus_id === 2 ? 'Barrancabermeja' : 'San Gil'}</td>
+                           {/*  <td className=" py-4 whitespace-nowrap">
+                                <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${dependencia.status === 'Activo' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
+                                    {dependencia.status}
                                 </span>
-                            </td>
+                            </td> */}
+                            
                             <td className="px-6 py-4 whitespace-nowrap">
                                 <button className="px-4 py-2 font-medium text-white bg-black rounded-md hover:bg-stone focus:outline-none focus:shadow-outline-blue active:bg-stone transition duration-150 ease-in-out">
                                     <FaEdit />
@@ -59,6 +56,4 @@ const CrudUsers = () => {
 
         </>
     );
-};
-
-export default CrudUsers;
+}
